@@ -1,5 +1,5 @@
 // wiserest 서비스워커: 앱 파일을 저장해 두어 인터넷이 없어도 열리게 함
-const C = 'wiserest-v2';
+const C = 'wiserest-v3';
 const SHELL = ['./', 'index.html', 'manifest.json', 'icon-192.png', 'icon-512.png', 'icon-maskable-512.png', 'apple-touch-icon.png'];
 
 self.addEventListener('install', e => {
