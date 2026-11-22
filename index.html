@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#fff8dc">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="wiserest">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<title>wiserest</title>
+<link id="fl" rel="stylesheet">
+<style>
+:root{--c:#f2b632;--bg:#ffffff;--line:#f1e4b8;--soft:#fff6d6}
+*{box-sizing:border-box}
+body{margin:0;font-family:'Jua',sans-serif;background:var(--bg);color:#4a4030;padding-bottom:76px}
+header{background:#fff8dc;padding:calc(10px + env(safe-area-inset-top)) 14px 12px;display:flex;align-items:center;gap:10px;color:#5a4a20;border-radius:0 0 24px 24px;box-shadow:0 2px 6px #0000000d}
+#ch{width:64px;height:64px;flex:none;background:#fff;border-radius:50%;overflow:hidden;display:flex;border:3px solid #fff}
+#ch svg,#ch img{width:100%;height:100%;object-fit:cover}
+#ti{font-size:22px;margin:0}
+#bub{background:#fff;color:#4a4030;border-radius:12px;padding:4px 10px;font-size:13px;margin-top:4px;display:inline-block}
+main{padding:14px}
+.card{background:#fff;border-radius:18px;padding:12px;margin-bottom:12px;box-shadow:0 2px 10px #00000014;border:1px solid #f3eee0}
+input,select,textarea{width:100%;font:inherit;padding:10px;border:2px solid var(--line);border-radius:12px;margin:4px 0;background:#fff}
+button{font:inherit;border:0;border-radius:12px;padding:9px 12px;background:var(--c);color:#fff;margin:3px 3px 3px 0}
+button.g{background:#f1efe8;color:#555}
+button:disabled,select:disabled{opacity:.4}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.it{display:flex;gap:10px}
+.it img{width:84px;height:84px;object-fit:cover;border-radius:12px;flex:none}
+.done .nm{text-decoration:line-through;opacity:.5}
+.nm{font-size:18px}.sm{font-size:13px;opacity:.8;white-space:pre-wrap}
+.chip{display:inline-block;background:var(--soft);border-radius:20px;padding:3px 10px;margin:2px;font-size:13px;cursor:pointer}
+nav{position:fixed;bottom:0;left:0;right:0;display:flex;background:#fff;border-top:2px solid var(--line);padding-bottom:env(safe-area-inset-bottom)}
+nav button{flex:1;background:none;color:#999;margin:0;border-radius:0;padding:12px 0;font-size:15px}
+nav button.on{color:var(--c)}
+#pl,#pl iframe{width:100%;aspect-ratio:16/9;border:0;border-radius:12px}
+.big{font-size:30px;text-align:center}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.fold{background:#fff;border-radius:18px;padding:10px;box-shadow:0 2px 10px #00000014;border:1px solid #f3eee0;cursor:pointer;text-align:center}
+.fold .th{width:100%;aspect-ratio:1;border-radius:14px;background:var(--soft);display:flex;align-items:center;justify-content:center;font-size:40px;overflow:hidden;margin-bottom:6px}
+.fold .th img{width:100%;height:100%;object-fit:cover}
+.fold b{display:block;font-size:16px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.photo-box{border:2px dashed var(--line);border-radius:14px;padding:12px;text-align:center;cursor:pointer;background:#fffdf3}
+.photo-box img{max-width:100%;max-height:180px;border-radius:12px;display:block;margin:0 auto}
+input[type=color]{height:46px;padding:4px}
+#toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:#4a4030;color:#fff;padding:10px 16px;border-radius:14px;font-size:14px;opacity:0;transition:.25s;pointer-events:none;max-width:88%;text-align:center;z-index:20}
+#toast.on{opacity:1}
+#modal{position:fixed;inset:0;background:#0006;display:none;align-items:center;justify-content:center;z-index:30;padding:20px}
+#modal .card{max-width:320px;width:100%;text-align:center}
+#mq{white-space:pre-line}
+#foot{margin-top:24px;border-top:3px dashed var(--line)}#foot .row button{flex:1}
+.total{background:var(--soft);text-align:center}.tsum{font-size:28px;color:#5a4a20;margin:2px 0}
+.price{font-size:16px;color:var(--c);cursor:pointer;margin:2px 0}
+.fonts{display:grid;grid-template-columns:1fr 1fr;gap:8px;max-height:420px;overflow:auto;padding:2px}
+.fo{border:2px solid #eee;border-radius:14px;padding:8px;text-align:center;cursor:pointer;background:#fff}
+.fo.on{border-color:var(--c);background:var(--soft)}
+.fo .s{font-size:22px;line-height:1.3}.fo .n{font-family:sans-serif;font-size:11px;color:#888}
+</style></head><body>
+<header><div id="ch"></div><div><h1 id="ti"></h1><span id="bub"></span></div></header>
+<main><div id="v"></div>
+<div class="card" id="inst" style="display:none;text-align:center"><b>📲 wiserest를 휴대폰에 설치하세요</b><p class="sm" id="insttx">홈 화면에 아이콘이 생기고, 인터넷이 없어도 열려요.</p><button id="instb" style="width:100%">앱 설치하기</button></div>
+<div class="card" id="foot"><b>💾 데이터 관리</b><p class="sm">백업 파일(wiserest.json)에는 위시리스트·사진·노래·꾸미기가 모두 들어가요. AI 키는 안전을 위해 빼고 저장해요.</p>
+<div class="row"><button id="bkup">📤 백업</button><button id="rstr">📥 복구</button><button class="g" id="rset">🧹 초기화</button></div></div></main>
+<nav><button data-t="w">🎁 위시</button><button data-t="s">🎵 노래연습</button><button data-t="d">🎨 꾸미기</button></nav>
+<div id="toast"></div>
+<div id="modal"><div class="card"><p id="mq" style="font-size:17px"></p><input id="mi" inputmode="numeric" style="display:none;text-align:center;font-size:20px"><button id="my">네</button><button class="g" id="mn">아니요</button></div></div>
+<script>
+const $=s=>document.querySelector(s);
+const e=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+
+// ---- 저장 (v2: 리스트 여러 개) ----
+const KEY='wish_v2';
+const DEF_CFG={title:'wiserest',font:'Jua',color:'#f2b632',char:0,img:'',say:'사고 싶은 거 다 적어봐!',key:''};
+function load(){
+  try{
+    const v2=JSON.parse(localStorage.getItem(KEY)||'null');if(v2)return v2;
+    const v1=JSON.parse(localStorage.getItem('wish_v1')||'null');
+    if(v1){ // 예전 데이터 옮기기: 기존 항목은 "내 위시리스트"로, 색은 새 노랑 테마로
+      return {lists:[{id:uid(),title:'내 위시리스트',items:v1.items||[]}],songs:v1.songs||[],cfg:{...DEF_CFG,...v1.cfg,color:DEF_CFG.color}}}
+  }catch(x){}
+  return {lists:[],songs:[],cfg:{...DEF_CFG}}}
+let S=load();
+// 예전 "가격/메모" 칸에 숫자만 적었던 항목은 가격으로 옮겨주기
+function migrate(){S.lists.forEach(l=>l.items.forEach(i=>{if(i.price===undefined){i.price=0;const m=String(i.memo||'').trim();if(/^[0-9,\s]+(원)?$/.test(m)){const d=+m.replace(/[^0-9]/g,'');if(d){i.price=d;i.memo=''}}}}));}
+migrate();
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(x){toast('저장 공간이 가득 찼어요. 사진을 몇 개 지워주세요.')}};
+
+// ---- 알림/확인창 (페이지 안에서 직접 그림) ----
+let tt;function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('on'),2200)}
+function ask(q,val){return new Promise(res=>{$('#mq').textContent=q;$('#modal').style.display='flex';const inp=val!==undefined,mi=$('#mi');
+  mi.style.display=inp?'block':'none';if(inp){mi.value=val?won(val):'';mi.oninput=()=>{const n=num(mi.value);mi.value=n?won(n):''};setTimeout(()=>mi.focus(),50)}
+  $('#my').textContent=inp?'저장':'네';$('#mn').textContent=inp?'취소':'아니요';
+  $('#my').onclick=()=>{$('#modal').style.display='none';res(inp?num(mi.value):true)};$('#mn').onclick=()=>{$('#modal').style.display='none';res(inp?null:false)}})}
+// ---- 가격 도우미 ----
+const num=s=>{const d=String(s??'').replace(/[^0-9]/g,'');return d?Math.min(+d,999999999999):0};
+const won=n=>(+n||0).toLocaleString('ko-KR');
+const sumOf=items=>items.reduce((a,i)=>{const p=+i.price||0;a.all+=p;if(i.done)a.done+=p;else a.left+=p;return a},{all:0,done:0,left:0});
+
+let tab='w',cur=null,photo='',player=null,recOn=false,rec,heard='',A=0,B=0,loopOn=false,lt,song=-1;
+
+// ---- 기본 캐릭터: 강아지 사진 (꾸미기에서 내 사진으로 바꿀 수 있음) ----
+const PUP='data:image/jpeg;base64,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';
+const face=()=>`<img src="${S.cfg.img||PUP}" style="width:100%;height:100%;object-fit:cover;display:block">`;
+
+// ---- 폰트 목록 (구글 폰트, 고른 폰트만 불러와서 가볍게) ----
+const FONTS=[['Jua','주아'],['Gaegu:wght@700','개구'],['Hi Melody','하이멜로디'],['Gamja Flower','감자꽃'],['Do Hyeon','도현'],['Single Day','싱글데이'],
+['Poor Story','푸어스토리'],['Cute Font','큐트폰트'],['Yeon Sung','연성'],['Dongle:wght@400','동글'],['Sunflower:wght@500','해바라기'],['Gowun Dodum','고운돋움'],
+['Gowun Batang','고운바탕'],['Nanum Pen Script','나눔손글씨 펜'],['Nanum Brush Script','나눔손글씨 붓'],['Nanum Gothic','나눔고딕'],['Nanum Myeongjo','나눔명조'],['Black Han Sans','검은고딕'],
+['Stylish','스타일리시'],['East Sea Dokdo','동해독도'],['Dokdo','독도'],['Song Myung','송명'],['Kirang Haerang','기랑해랑'],['Gugi','구기'],
+['Black And White Picture','흑백사진'],['Noto Sans KR','본고딕'],['IBM Plex Sans KR','IBM 플렉스'],['Orbit','오르빗'],['Diphylleia','산하엽'],['Hahmlet','함렛'],
+['Gasoek One','가석'],['Bagel Fat One','베이글'],['Moirai One','모이라이'],['Grandiflora One','그랜디플로라']];
+const fam=spec=>spec.split(':')[0];
+const fUrl=(specs,text)=>'https://fonts.googleapis.com/css2?'+specs.map(f=>'family='+f.replace(/ /g,'+')).join('&')+(text?'&text='+encodeURIComponent(text):'')+'&display=swap';
+const SAMPLE='가나다 위시 강아지 ABC 123';
+function useFont(name){const sp=(FONTS.find(f=>fam(f[0])===name)||FONTS[0])[0];$('#fl').href=fUrl([sp])}
+
+function skin(){const c=S.cfg;document.documentElement.style.setProperty('--c',c.color);useFont(c.font);document.body.style.fontFamily=`'${c.font}',sans-serif`;$('#ti').textContent=c.title;$('#bub').textContent=c.say;$('#ch').innerHTML=face()}
+
+function shrink(file,cb,m=640){const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{const k=Math.min(1,m/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=im.width*k;c.height=im.height*k;c.getContext('2d').drawImage(im,0,0,c.width,c.height);cb(c.toDataURL('image/jpeg',.7))};im.onerror=()=>toast('이 사진은 열 수 없어요');im.src=r.result};r.readAsDataURL(file)}
+function pick(cb,m){const i=document.createElement('input');i.type='file';i.accept='image/*';i.onchange=()=>{const f=i.files[0];if(f)shrink(f,cb,m)};i.click()}
+
+// ---- AI (본인 API 키 필요) ----
+async function ai(content){
+  if(!S.cfg.key){toast('🎨 꾸미기 탭 맨 아래에 AI 키를 먼저 넣어주세요.');return null}
+  try{const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'content-type':'application/json','x-api-key':S.cfg.key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-5-5',max_tokens:400,messages:[{role:'user',content}]})});
+    const j=await r.json();if(!r.ok)return 'AI 오류: '+(j.error?.message||r.status);return j.content.map(x=>x.text||'').join('')}
+  catch(x){return 'AI 호출 실패: '+x.message}}
+const img64=d=>({type:'image',source:{type:'base64',media_type:'image/jpeg',data:d.split(',')[1]}});
+
+// ---- 화면 ----
+function render(){document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.t===tab));skin();({w:rW,s:rS,d:rD})[tab]();scrollTo(0,0)}
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{tab=b.dataset.t;song=-1;stopAll();render()});
+const L=()=>S.lists.find(x=>x.id===cur);
+
+// ---- 위시: 리스트(파일) 목록 ----
+function rW(){if(L())return rItems();cur=null;
+  $('#v').innerHTML=`<div class="card"><div class="big">📁</div>
+  <b>새 위시리스트 만들기</b><input id="lt" placeholder="리스트 제목 (예: 생일선물, 문구류, 겨울옷)">
+  <button id="la" style="width:100%">＋ 리스트 만들기</button></div>
+  ${S.lists.length?(()=>{const t=sumOf(S.lists.flatMap(l=>l.items));return `<div class="card total"><b>💰 모든 리스트 합계</b><div class="tsum">${won(t.all)}원</div><div class="sm">✅ 산 것 ${won(t.done)}원 · 🛒 아직 안 산 것 ${won(t.left)}원</div></div>`})():''}
+  ${S.lists.length?`<div class="grid">${S.lists.map(l=>{const ph=l.items.find(i=>i.photo),dn=l.items.filter(i=>i.done).length;
+    return `<div class="fold" onclick="openList('${l.id}')"><div class="th">${ph?`<img src="${ph.photo}">`:'🎁'}</div><b>${e(l.title)}</b><span class="sm">${l.items.length}개 · 산 것 ${dn}개</span><div style="color:var(--c);font-size:15px">${won(sumOf(l.items).all)}원</div></div>`}).join('')}</div>`
+  :`<div class="card" style="text-align:center"><div style="width:90px;height:90px;margin:0 auto;border-radius:50%;overflow:hidden">${face()}</div><p>아직 리스트가 없어요.<br>위에서 제목을 적고 만들어 보세요!</p></div>`}`;
+  $('#la').onclick=()=>{const t=$('#lt').value.trim();if(!t)return toast('리스트 제목을 적어주세요');
+    const l={id:uid(),title:t,items:[]};S.lists.unshift(l);save();cur=l.id;rW()};
+  $('#lt').onkeydown=ev=>{if(ev.key==='Enter')$('#la').click()}}
+function openList(id){cur=id;photo='';rW()}
+
+// ---- 위시: 리스트 안의 항목 ----
+function rItems(){const l=L();
+  const names=[...new Set(S.lists.flatMap(x=>x.items.map(i=>i.name)))];
+  $('#v').innerHTML=`<div class="row" style="margin-bottom:8px"><button class="g" id="bk">← 리스트 목록</button><span style="flex:1"></span><button class="g" id="ldel">🗑 리스트 삭제</button></div>
+  <div class="card"><b>📁 리스트 제목</b><input id="ln" value="${e(l.title)}">
+  <b>🎁 사고 싶은 것 추가</b>
+  <div class="photo-box" id="pb">${photo?`<img src="${photo}"><div class="sm">눌러서 사진 바꾸기</div>`:'📷 눌러서 사진 첨부하기<br><span class="sm">갤러리나 카메라에서 골라요</span>'}</div>
+  <input id="nm" list="nl" placeholder="이름 (이전에 쓴 이름은 자동완성돼요)"><datalist id="nl">${names.map(n=>`<option value="${e(n)}">`).join('')}</datalist>
+  <div>${names.slice(0,6).map(n=>`<span class="chip">${e(n)}</span>`).join('')}</div>
+  <div class="row"><input id="pr" style="flex:1" inputmode="numeric" placeholder="가격 (원)"><input id="mm" style="flex:1" placeholder="메모(선택)"></div>
+  <input id="lk" placeholder="링크(선택)">
+  ${photo?'<button class="g" id="px">사진 빼기</button>':''}
+  <button id="add" style="width:100%">리스트에 추가</button></div>
+  ${(()=>{const t=sumOf(l.items);return `<div class="card total"><b>💰 "${e(l.title)}" 합계</b><div class="tsum">${won(t.all)}원</div><div class="sm">✅ 산 것 ${won(t.done)}원 · 🛒 아직 안 산 것 ${won(t.left)}원 · 총 ${l.items.length}개</div></div>`})()}
+  ${l.items.map((it,i)=>`<div class="card it ${it.done?'done':''}">${it.photo?`<img src="${it.photo}" onclick="rePhoto(${i})">`:`<div onclick="rePhoto(${i})" style="width:84px;height:84px;border-radius:12px;background:var(--soft);display:flex;align-items:center;justify-content:center;flex:none;font-size:13px;text-align:center">📷<br>사진 넣기</div>`}<div style="flex:1;min-width:0"><div class="nm">${e(it.name)}</div><div class="price" onclick="setPrice(${i})">${it.price?won(it.price)+'원':'💰 가격 넣기'} <span class="sm">✏️</span></div>${it.memo?`<div class="sm">${e(it.memo)}</div>`:''}${it.link?`<a class="sm" href="${e(it.link)}" target="_blank" rel="noopener">링크 열기</a>`:''}
+  <button onclick="tg(${i})">${it.done?'↩️':'✅ 샀어요'}</button><a href="https://search.naver.com/search.naver?query=${encodeURIComponent(it.name)}" target="_blank" rel="noopener"><button class="g">검색</button></a><button class="g" onclick="del(${i})">🗑</button></div></div>`).join('')||'<p style="text-align:center">이 리스트는 아직 비어있어요 🐶</p>'}`;
+  $('#bk').onclick=()=>{cur=null;photo='';rW()};
+  $('#ldel').onclick=async()=>{if(await ask(`"${l.title}" 리스트를 통째로 지울까요?`)){S.lists=S.lists.filter(x=>x.id!==l.id);cur=null;save();rW()}};
+  $('#ln').oninput=ev=>{l.title=ev.target.value||'제목 없음';save()};
+  document.querySelectorAll('.chip').forEach(c=>c.onclick=()=>$('#nm').value=c.textContent);
+  const keep=()=>({n:$('#nm').value,p:$('#pr').value,m:$('#mm').value,k:$('#lk').value});
+  const back=v=>{$('#nm').value=v.n;$('#pr').value=v.p;$('#mm').value=v.m;$('#lk').value=v.k};
+  $('#pr').oninput=ev=>{const n=num(ev.target.value);ev.target.value=n?won(n):''};
+  $('#pb').onclick=()=>{const v=keep();pick(d=>{photo=d;rItems();back(v)})};
+  if($('#px'))$('#px').onclick=()=>{const v=keep();photo='';rItems();back(v)};
+  $('#add').onclick=()=>{const n=$('#nm').value.trim();if(!n)return toast('이름을 적어주세요');l.items.unshift({name:n,price:num($('#pr').value),memo:$('#mm').value.trim(),link:$('#lk').value.trim(),photo,done:false});photo='';save();rItems();toast('추가했어요!')}}
+async function setPrice(i){const it=L().items[i],v=await ask(`"${it.name}" 가격을 적어주세요 (원)`,it.price||0);if(v===null)return;it.price=v;save();rItems();toast('가격을 저장했어요')}
+function rePhoto(i){pick(d=>{L().items[i].photo=d;save();rItems()})}
+function tg(i){const it=L().items[i];it.done=!it.done;save();rItems()}
+async function del(i){if(await ask('이 항목을 지울까요?')){L().items.splice(i,1);save();rItems()}}
+
+// ---- 노래연습: 가사 없이 "원곡 음정" vs "내 음정" 비교 + AI 코치 ----
+// 브라우저는 유튜브 소리를 직접 읽을 수 없어서, 원곡을 스피커로 틀어 마이크로 음정을 '담아두고'
+// 이어폰을 끼고 부른 내 목소리 음정과 비교해요. (녹음 파일은 저장하지 않고 음정 숫자만 저장)
+const FPS=20,MAXS=90;
+let mic=null,actx=null,an=null,buf=null,tk=null,capt=null,mrec=null,chunks=[],myUrl='',last=null,ytOK=false,manual=false,ytT;
+// 영상이 안 나올 때(미리보기 화면·퍼가기 금지 영상): 안내 + 유튜브 앱 링크 + 수동 모드로 전환
+function ytFail(code){if(ytOK&&code==='load')return;clearTimeout(ytT);manual=true;ytOK=false;const s=S.songs[song];if(!s||!$('#pl'))return;
+  const why=code===101||code===150||code===153?'이 영상은 주인이 <b>다른 앱에서 재생을 막아둔</b> 영상이에요. (공식 뮤직비디오에 많아요)':code===100?'영상을 찾을 수 없어요. 링크를 확인해주세요.':'영상을 불러오지 못했어요. (미리보기 화면에서는 유튜브가 막혀 있어요. GitHub에 올린 앱에서는 보통 잘 나와요)';
+  $('#pl').outerHTML=`<div id="pl" style="aspect-ratio:auto;background:var(--soft);border-radius:12px;padding:12px"><div class="sm">😢 ${why}</div>
+  <a href="https://youtu.be/${s.id}" target="_blank" rel="noopener"><button style="margin-top:8px">▶ 유튜브에서 열기</button></a>
+  <div class="sm" style="margin-top:6px">👉 <b>수동 모드</b>로 바뀌었어요. 유튜브에서 노래를 직접 틀고, 아래 ①·② 버튼으로 시작·끝을 눌러주세요. 노래방(가사) 영상은 대부분 재생이 돼서 다른 영상 링크로 바꿔보는 것도 좋아요.</div></div>`;
+  ['#ba','#bb','#bl','#sp'].forEach(q=>{const x=$(q);if(x)x.disabled=true})}
+function ytId(u){const m=String(u).match(/(?:v=|youtu\.be\/|shorts\/|embed\/|live\/)([\w-]{11})/);return m?m[1]:''}
+function loadYT(cb){if(window.YT&&YT.Player)return cb();window.onYouTubeIframeAPIReady=cb;const s=document.createElement('script');s.src='https://www.youtube.com/iframe_api';s.onerror=()=>ytFail('load');document.head.appendChild(s)}
+const mmss=t=>`${Math.floor(t/60)}:${String(Math.floor(t%60)).padStart(2,'0')}`;
+const NN=['도','도#','레','레#','미','파','파#','솔','솔#','라','라#','시'];
+const note=m=>m==null?'-':NN[((Math.round(m)%12)+12)%12]+(Math.floor(Math.round(m)/12)-1);
+
+function rS(){
+  $('#v').innerHTML=`<div class="card"><div class="big">🎵</div><input id="st" placeholder="노래 제목"><input id="su" placeholder="유튜브 링크">
+  <button id="sa" style="width:100%">노래 저장</button><p class="sm">가사는 안 넣어도 돼요. 원곡과 내 목소리의 음정·박자를 비교해서 AI가 코치해줘요.</p></div>
+  ${S.songs.map((s,i)=>`<div class="card row"><b style="flex:1">${e(s.title)}</b>${s.ref?'<span class="chip">원곡 담김</span>':''}<button onclick="openSong(${i})">▶ 연습</button><button class="g" onclick="delSong(${i})">🗑</button></div>`).join('')}<div id="pn"></div>`;
+  $('#sa').onclick=()=>{const id=ytId($('#su').value);if(!id)return toast('유튜브 링크를 확인해주세요');S.songs.unshift({title:$('#st').value.trim()||'제목 없음',id});save();rS();openSong(0)}}
+async function delSong(i){if(await ask('이 노래를 지울까요?')){S.songs.splice(i,1);save();rS()}}
+function stopAll(){stopCap(true);clearInterval(lt);clearTimeout(ytT);player=null}
+
+function openSong(i){stopCap(true);song=i;const s=S.songs[i];A=0;B=0;loopOn=false;last=null;
+  $('#pn').innerHTML=`<div class="card"><b>${e(s.title)}</b><div id="pl"></div>
+  <div class="row"><select id="sp" style="width:auto"><option>0.5</option><option>0.75</option><option selected>1</option></select>배속
+  <button class="g" id="ba">A 구간시작</button><button class="g" id="bb">B 구간끝</button><button class="g" id="bl">🔁 반복 꺼짐</button></div>
+  <p class="sm">💡 처음엔 A·B로 30초 안쪽 짧은 구간을 정하면 비교가 더 정확해요.</p></div>
+  <div class="card"><b>① 원곡 담기</b><p class="sm">휴대폰 <b>스피커</b>로 원곡을 틀고 마이크가 음정을 기록해요. 조용한 곳에서, 이어폰 없이 해주세요.</p>
+  <button id="rO">🎧 원곡 담기 시작</button> <span class="sm" id="oInfo">${s.ref?`담긴 원곡: ${mmss(s.ref.t0)}부터 ${(s.ref.p.length/FPS).toFixed(1)}초`:'아직 안 담았어요'}</span></div>
+  <div class="card"><b>② 내 노래 부르기</b><p class="sm">⚠️ <b>이어폰</b>을 끼고 불러주세요. 원곡 소리가 마이크에 섞이면 비교가 틀려져요. 담아둔 원곡 구간이 자동으로 다시 재생돼요.</p>
+  <button id="rM">🎤 부르기 시작</button><button class="g" id="pM" style="display:none">▶ 내 노래 듣기</button>
+  <div id="live" class="sm" style="font-size:16px;margin-top:6px"></div></div>
+  <div class="card" id="res" style="display:none"><b>📊 비교 결과</b>
+  <canvas id="cv" width="640" height="240" style="width:100%;background:#fffdf5;border-radius:12px;margin-top:6px"></canvas>
+  <p class="sm">회색 = 원곡 음정, 색깔 = 내 음정 (위로 갈수록 높은 음)</p><div id="sc"></div>
+  <button id="bf" style="width:100%">🤖 AI 코치에게 물어보기</button><div class="sm" id="fb" style="margin-top:6px"></div></div>`;
+  $('#pn').scrollIntoView({behavior:'smooth'});
+  ytOK=false;manual=false;clearTimeout(ytT);ytT=setTimeout(()=>ytFail('load'),7000);
+  try{loadYT(()=>{if(!$('#pl'))return;player=new YT.Player('pl',{videoId:s.id,playerVars:{playsinline:1,rel:0,origin:location.origin},events:{onReady:()=>{ytOK=true;clearTimeout(ytT)},onError:ev=>ytFail(ev.data)}})})}catch(x){ytFail('load')}
+  $('#sp').onchange=()=>player&&player.setPlaybackRate&&player.setPlaybackRate(+$('#sp').value);
+  $('#ba').onclick=()=>{if(!player||!player.getCurrentTime)return;A=player.getCurrentTime();$('#ba').textContent='A '+mmss(A)};
+  $('#bb').onclick=()=>{if(!player||!player.getCurrentTime)return;B=player.getCurrentTime();$('#bb').textContent='B '+mmss(B)};
+  $('#bl').onclick=()=>{loopOn=!loopOn;$('#bl').textContent=loopOn?'🔁 반복 켜짐':'🔁 반복 꺼짐'};
+  clearInterval(lt);lt=setInterval(()=>{if(!capt&&loopOn&&player&&player.getCurrentTime&&B>A&&player.getCurrentTime()>=B)player.seekTo(A,true)},300);
+  $('#rO').onclick=()=>capt?stopCap():startCap('o');
+  $('#rM').onclick=()=>capt?stopCap():startCap('m');
+  $('#pM').onclick=()=>{if(myUrl){try{player&&player.pauseVideo()}catch(x){};new Audio(myUrl).play().catch(()=>toast('재생할 수 없어요'))}};
+  $('#bf').onclick=()=>coach(S.songs[song])}
+
+// ---- 마이크로 음정 기록 ----
+async function startCap(kind){
+  const s=S.songs[song];
+  if(kind==='m'&&!s.ref)return toast('먼저 ① 원곡 담기를 해주세요');
+  const yt=ytOK&&player&&player.seekTo;
+  if(!yt&&!manual)return toast('영상이 아직 준비 안 됐어요. 잠깐 뒤에 다시 눌러주세요');
+  try{if(!mic)mic=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false}})}
+  catch(x){return toast('마이크를 쓸 수 없어요. 마이크 권한을 허용해주세요')}
+  try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();await actx.resume();
+    if(!an){an=actx.createAnalyser();an.fftSize=2048;actx.createMediaStreamSource(mic).connect(an);buf=new Float32Array(an.fftSize)}}
+  catch(x){return toast('소리 분석을 시작할 수 없어요')}
+  const start=kind==='m'?s.ref.a:A;
+  const end=kind==='m'?(s.ref.b>s.ref.a?s.ref.b:s.ref.a+s.ref.len/FPS+1):(B>A?B:0);
+  loopOn=false;$('#bl').textContent='🔁 반복 꺼짐';
+  if(yt&&kind==='m'&&s.ref)player.setPlaybackRate&&player.setPlaybackRate(s.ref.rate||1);
+  if(yt){player.seekTo(start,true);player.playVideo()}else toast(kind==='o'?'지금 유튜브에서 원곡을 틀어주세요 (스피커로)':'지금 유튜브에서 같은 부분을 틀고 불러주세요 (이어폰)');
+  capt={kind,p:[],start:yt?start:0,end:yt?end:0,rate:yt?(+$('#sp').value||1):1,maxF:kind==='m'&&s.ref?s.ref.len+5*FPS:MAXS*FPS};
+  if(kind==='m'&&window.MediaRecorder){chunks=[];try{mrec=new MediaRecorder(mic);mrec.ondataavailable=ev=>chunks.push(ev.data);mrec.start()}catch(x){mrec=null}}
+  $(kind==='o'?'#rO':'#rM').textContent=kind==='o'?'⏹ 원곡 담기 끝':'⏹ 그만 부르기';
+  tk=setInterval(()=>{if(!capt)return;an.getFloatTimeDomainData(buf);const f=pitch(buf,actx.sampleRate);
+    const m=f?+(69+12*Math.log2(f/440)).toFixed(1):null;capt.p.push(m);
+    const lv=$('#live');if(lv)lv.textContent=(capt.kind==='o'?'🎧 원곡 듣는 중 ':'🎤 부르는 중 ')+(m?'🎵 '+note(m):'…')+`  (${(capt.p.length/FPS).toFixed(0)}초)`;
+    const t=player&&player.getCurrentTime?player.getCurrentTime():0;
+    if((yt&&capt.end&&t>=capt.end)||capt.p.length>=capt.maxF)stopCap()},1000/FPS)}
+
+function stopCap(abort){if(!capt)return;clearInterval(tk);const c=capt;capt=null;try{player&&player.pauseVideo()}catch(x){}
+  const r=mrec;mrec=null;if(r){r.onstop=()=>{if(myUrl)URL.revokeObjectURL(myUrl);myUrl=URL.createObjectURL(new Blob(chunks,{type:r.mimeType||'audio/webm'}));const b=$('#pM');if(b)b.style.display='inline-block'};try{r.stop()}catch(x){}}
+  const bO=$('#rO'),bM=$('#rM'),lv=$('#live');if(bO)bO.textContent='🎧 원곡 담기 시작';if(bM)bM.textContent='🎤 부르기 시작';if(lv)lv.textContent='';
+  if(abort)return;
+  const {p,lead}=clean(c.p);
+  if(p.filter(v=>v!=null).length<FPS)return toast('소리가 거의 안 잡혔어요. 마이크 가까이에서 다시 해주세요');
+  const s=S.songs[song];
+  if(c.kind==='o'){s.ref={p,a:c.start,b:c.end,t0:c.start+lead/FPS*c.rate,len:c.p.length,rate:c.rate};save();
+    $('#oInfo').textContent=`담긴 원곡: ${mmss(s.ref.t0)}부터 ${(p.length/FPS).toFixed(1)}초`;toast('원곡을 담았어요! 이제 이어폰 끼고 ② 불러보세요')}
+  else{last=compare(s.ref,p);show(last)}}
+
+// 음정 찾기 (McLeod 방식 자기상관). 소리가 작거나 애매하면 0
+function pitch(b,sr){const W=1024;let rms=0;for(let i=0;i<W;i++)rms+=b[i]*b[i];if(Math.sqrt(rms/W)<0.012)return 0;
+  const minL=Math.floor(sr/1000),maxL=Math.min(Math.floor(sr/70),W-2),n=new Float32Array(maxL+2);let mx=0;
+  for(let t=minL;t<=maxL+1;t++){let ac=0,m=0;for(let j=0;j<W-t;j++){ac+=b[j]*b[j+t];m+=b[j]*b[j]+b[j+t]*b[j+t]}n[t]=m?2*ac/m:0;if(t<=maxL&&n[t]>mx)mx=n[t]}
+  if(mx<0.6)return 0;
+  for(let t=minL+1;t<=maxL;t++){if(n[t]>=0.9*mx&&n[t]>=n[t-1]&&n[t]>=n[t+1]){const a=n[t-1],bb=n[t],c=n[t+1],d=a-2*bb+c,sh=d?0.5*(a-c)/d:0;return sr/(t+sh)}}
+  return 0}
+// 앞뒤 빈 소리 자르고, 튀는 값 정리(중앙값 필터)
+function clean(raw){let s=0,e2=raw.length-1;while(s<raw.length&&raw[s]==null)s++;while(e2>s&&raw[e2]==null)e2--;
+  const p=raw.slice(s,e2+1).map((v,i,a)=>{if(v==null)return null;const w=a.slice(Math.max(0,i-2),i+3).filter(x=>x!=null);if(w.length<3)return null;w.sort((x,y)=>x-y);return w[w.length>>1]});
+  return {p,lead:s}}
+const med=arr=>{const s=[...arr].sort((x,y)=>x-y);return s[s.length>>1]};
+
+// 원곡과 내 음정을 시간 맞춰(DTW) 비교
+function compare(ref,mine){const R=ref.p;
+  const vr=R.filter(v=>v!=null),vm=mine.filter(v=>v!=null);
+  const oct=Math.round((med(vm)-med(vr))/12)*12; // 남녀처럼 옥타브 차이는 봐줌
+  const M2=mine.map(v=>v==null?null:v-oct),N=R.length,M=M2.length,w=Math.max(Math.abs(N-M)+5,Math.round(Math.max(N,M)*0.2));
+  const W=M+1,D=new Float32Array((N+1)*W).fill(Infinity);D[0]=0;
+  const cost=(a,b)=>a==null&&b==null?0:(a==null||b==null)?1.5:Math.min(Math.abs(a-b),6);
+  for(let i=1;i<=N;i++){const c=Math.round(i*M/N),lo=Math.max(1,c-w),hi=Math.min(M,c+w);
+    for(let j=lo;j<=hi;j++){const k=i*W+j;D[k]=cost(R[i-1],M2[j-1])+Math.min(D[k-W],D[k-1],D[k-W-1])}}
+  const path=[];let i=N,j=M;
+  while(i>0&&j>0){path.push([i-1,j-1]);const a=D[(i-1)*W+j-1],b=D[(i-1)*W+j],c=D[i*W+j-1];if(a<=b&&a<=c){i--;j--}else if(b<=c)i--;else j--}
+  path.reverse();
+  const al=Array(N).fill(null).map(()=>[]);path.forEach(([x,y])=>{if(M2[y]!=null)al[x].push(M2[y])});
+  const mineOn=al.map(a=>a.length?med(a):null);
+  let both=0,hit=0,sum=0,cov=0,rv=0,lag=0;
+  path.forEach(([x,y])=>{lag+=(y-x*M/N)});
+  for(let x=0;x<N;x++){if(R[x]!=null){rv++;if(mineOn[x]!=null){cov++;both++;const d=mineOn[x]-R[x];sum+=d;if(Math.abs(d)<=1)hit++}}}
+  const seg=[],K=Math.min(5,Math.max(1,Math.round(N/FPS/4)));
+  for(let k=0;k<K;k++){const a=Math.floor(N*k/K),b=Math.floor(N*(k+1)/K);let h=0,t=0,s2=0;
+    for(let x=a;x<b;x++)if(R[x]!=null&&mineOn[x]!=null){t++;const d=mineOn[x]-R[x];s2+=d;if(Math.abs(d)<=1)h++}
+    seg.push({from:ref.t0+a/FPS*(ref.rate||1),to:ref.t0+b/FPS*(ref.rate||1),acc:t?Math.round(h/t*100):0,bias:t?+(s2/t).toFixed(1):0})}
+  const perSec=[];for(let x=0;x<N;x+=FPS){const r=R.slice(x,x+FPS).filter(v=>v!=null),m=mineOn.slice(x,x+FPS).filter(v=>v!=null);
+    perSec.push(`${mmss(ref.t0+x/FPS*(ref.rate||1))} 원곡 ${r.length?note(med(r)):'-'} / 나 ${m.length?note(med(m)):'-'}`)}
+  const acc=both?Math.round(hit/both*100):0,cover=rv?Math.round(cov/rv*100):0,bias=both?+(sum/both).toFixed(1):0,lagS=+(lag/path.length/FPS).toFixed(2);
+  return {R,mineOn,acc,cover,bias,lagS,oct,seg,perSec,score:Math.round(acc*0.65+cover*0.35),range:[note(Math.min(...vm)),note(Math.max(...vm))]}}
+
+function show(r){$('#res').style.display='block';$('#fb').textContent='';
+  const tip=r.bias>0.5?`전체적으로 원곡보다 약 ${r.bias}음(반음) <b>높게</b> 불렀어요`:r.bias<-0.5?`전체적으로 원곡보다 약 ${-r.bias}음(반음) <b>낮게</b> 불렀어요`:'전체 음 높이는 원곡과 잘 맞아요';
+  const tm=Math.abs(r.lagS)<0.15?'박자는 원곡과 거의 맞아요':r.lagS>0?`평균 ${r.lagS}초 정도 <b>늦게</b>따라갔어요`:`평균 ${-r.lagS}초 정도 <b>빠르게</b>불렀어요`;
+  const weak=[...r.seg].sort((a,b)=>a.acc-b.acc)[0];
+  $('#sc').innerHTML=`<div class="big" style="font-size:26px">${r.score}점</div>
+  <div class="sm">🎯 음정 정확도 ${r.acc}% · 🔊 원곡 따라 부른 비율 ${r.cover}%<br>↕️ ${tip}<br>⏱ ${tm}<br>🎼 내 음역: ${r.range[0]} ~ ${r.range[1]}${r.oct?` (원곡과 ${Math.abs(r.oct/12)}옥타브 차이는 봐줬어요)`:''}<br>
+  📍 가장 약한 구간: ${mmss(weak.from)}~${mmss(weak.to)} (${weak.acc}%)<br>※ 마이크로 잡은 음정 기준이라 대략적인 결과예요. 원곡은 반주가 섞여 오차가 있을 수 있어요.</div>`;
+  draw(r)}
+
+function draw(r){const cv=$('#cv'),g=cv.getContext('2d'),Wd=cv.width,H=cv.height;g.clearRect(0,0,Wd,H);
+  const all=[...r.R,...r.mineOn].filter(v=>v!=null),lo=Math.min(...all)-2,hi=Math.max(...all)+2,N=r.R.length;
+  const X=i=>i/(N-1||1)*(Wd-20)+10,Y=v=>H-10-(v-lo)/(hi-lo||1)*(H-20);
+  g.strokeStyle='#eee';g.lineWidth=1;for(let v=Math.ceil(lo);v<hi;v++)if(v%12===0){g.beginPath();g.moveTo(0,Y(v));g.lineTo(Wd,Y(v));g.stroke()}
+  const line=(arr,col,wd)=>{g.strokeStyle=col;g.lineWidth=wd;g.beginPath();let on=false;arr.forEach((v,i)=>{if(v==null){on=false;return}on?g.lineTo(X(i),Y(v)):g.moveTo(X(i),Y(v));on=true});g.stroke()};
+  line(r.R,'#bbb',4);line(r.mineOn,getComputedStyle(document.documentElement).getPropertyValue('--c').trim()||'#f2b632',2.5)}
+
+async function coach(s){if(!last)return toast('먼저 ② 노래를 불러주세요');$('#fb').textContent='분석 중… 🐶';const r=last;
+  const t=await ai([{type:'text',text:`너는 다정한 노래 연습 코치야. 노래 제목: "${s.title}".
+가사와 음원은 없고, 휴대폰 마이크로 잡은 음정 데이터만 있어. 원곡 음정은 스피커 소리를 녹음한 것이라 반주 때문에 틀린 값이 섞였을 수 있어. 옥타브 차이는 이미 맞춰서 비교했어.
+[전체] 점수 ${r.score}점, 음정 정확도(반음 이내) ${r.acc}%, 원곡 따라 부른 비율 ${r.cover}%, 평균 음높이 차이 ${r.bias}반음(+는 높게), 평균 박자 차이 ${r.lagS}초(+는 늦게), 내 음역 ${r.range.join('~')}
+[구간별] ${r.seg.map(g=>`${mmss(g.from)}~${mmss(g.to)}: 정확도 ${g.acc}%, 음높이차 ${g.bias}`).join(' / ')}
+[초 단위 음정] ${r.perSec.join(' | ')}
+이 데이터만 근거로, 한국어로 짧고 쉽게: 1) 잘한 점 1가지 2) 고칠 점 3가지(시간 표시와 함께) 3) 오늘 바로 할 연습법 2가지. 데이터에 없는 가사나 내용은 지어내지 마. 전체 350자 이내로 끝까지 완성해서 답해.`}]);
+  $('#fb').textContent=t||''}
+
+// ---- 꾸미기 ----
+function rD(){const c=S.cfg;
+  $('#v').innerHTML=`<div class="card"><b>제목</b><input id="dt" value="${e(c.title)}"><b>말풍선 한마디</b><input id="ds" value="${e(c.say)}">
+  <b>포인트 색</b><input id="dc" type="color" value="${c.color}">
+  <b>캐릭터 사진</b>
+  <div class="row"><div style="width:72px;height:72px;border:3px solid var(--c);border-radius:50%;overflow:hidden;flex:none">${face()}</div>
+  <div><button class="g" id="di">다른 사진으로 바꾸기</button>${c.img?'<button class="g" id="dr">🐶 기본 강아지로</button>':''}</div></div></div>
+  <div class="card"><b>🔤 폰트 (${FONTS.length}가지)</b>
+  <button class="g" id="fbtn" style="width:100%;display:flex;justify-content:space-between;align-items:center"><span id="fcur"></span><span id="farr">▼ 펼치기</span></button>
+  <div class="fonts" id="fgrid" style="display:none">${FONTS.map(([sp,kn])=>{const f=fam(sp);return `<div class="fo ${f===c.font?'on':''}" data-f="${e(f)}"><div class="s" style="font-family:'${e(f)}',sans-serif">${SAMPLE.split(' ').slice(0,2).join(' ')}</div><div class="n">${e(kn)}</div></div>`}).join('')}</div></div>
+  <div class="card"><b>🤖 AI 키 (선택)</b><p class="sm">노래연습의 AI 코치에만 쓰여요(사용량만큼 요금 발생). 키는 이 폰 안에만 저장되고, 저장한 뒤에는 화면에 다시 보이지 않아요.</p><div id="kbox"></div></div>`;
+  const on=(id,k)=>$(id).oninput=ev=>{S.cfg[k]=ev.target.value;save();skin()};
+  on('#dt','title');on('#ds','say');on('#dc','color');kbox();
+  // 폰트 미리보기: 샘플 글자만 담은 가벼운 요청 한 번으로 전부 불러오기
+  if(!$('#fpv')){const l=document.createElement('link');l.id='fpv';l.rel='stylesheet';l.href=fUrl(FONTS.map(f=>f[0]),'가나다위시');document.head.appendChild(l)}
+  // 폰트 목록: 버튼으로 펼치고, 하나 고르면 자동으로 접힘
+  const fName=()=>{const f=FONTS.find(x=>fam(x[0])===S.cfg.font);return f?f[1]:S.cfg.font};
+  const fShow=open=>{$('#fgrid').style.display=open?'grid':'none';$('#farr').textContent=open?'▲ 접기':'▼ 펼치기';
+    $('#fcur').innerHTML=`지금 폰트: <b style="font-family:'${e(S.cfg.font)}',sans-serif">${e(fName())}</b>`};
+  fShow(false);
+  $('#fbtn').onclick=()=>fShow($('#fgrid').style.display==='none');
+  document.querySelectorAll('.fo').forEach(d=>d.onclick=()=>{S.cfg.font=d.dataset.f;save();skin();document.querySelectorAll('.fo').forEach(x=>x.classList.toggle('on',x===d));fShow(false);toast(fName()+' 폰트로 바꿨어요');$('#fbtn').scrollIntoView({behavior:'smooth',block:'center'})});
+  $('#di').onclick=()=>pick(d=>{S.cfg.img=d;save();render()},240);
+  if($('#dr'))$('#dr').onclick=()=>{S.cfg.img='';save();render()}}
+// AI 키: 한 번 저장하면 숨김 (값을 화면에 다시 채우지 않음)
+function kbox(edit){const b=$('#kbox');if(!b)return;
+  if(S.cfg.key&&!edit){b.innerHTML=`<div class="row"><span style="flex:1">✅ AI 키가 저장되어 있어요</span><button class="g" id="kc">키 바꾸기</button><button class="g" id="kd">키 지우기</button></div>`;
+    $('#kc').onclick=()=>kbox(true);
+    $('#kd').onclick=async()=>{if(await ask('저장된 AI 키를 지울까요?')){S.cfg.key='';save();kbox();toast('AI 키를 지웠어요')}};return}
+  b.innerHTML=`<input id="dk" type="password" autocomplete="off" placeholder="sk-ant-... 붙여넣기"><div class="row"><button id="ks">저장</button>${S.cfg.key?'<button class="g" id="kx">취소</button>':''}</div>`;
+  $('#ks').onclick=()=>{const v=$('#dk').value.trim();if(!v)return toast('키를 붙여넣어 주세요');if(!/^sk-/.test(v))return toast('키는 보통 sk- 로 시작해요. 다시 확인해주세요');
+    S.cfg.key=v;save();$('#dk').value='';kbox();toast('AI 키를 저장했어요. 이제 화면에는 안 보여요')};
+  if($('#kx'))$('#kx').onclick=()=>kbox();
+}
+// ---- 백업 · 복구 · 초기화 (모든 탭 맨 아래) ----
+$('#bkup').onclick=()=>{try{
+  const data={app:'wiserest',ver:2,date:new Date().toISOString(),lists:S.lists,songs:S.songs,cfg:{...S.cfg,key:''}};
+  const url=URL.createObjectURL(new Blob([JSON.stringify(data)],{type:'application/json'}));
+  const a=document.createElement('a');a.href=url;a.download='wiserest.json';document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),3000);toast('wiserest.json 백업 파일을 만들었어요 (다운로드 폴더 확인)')}
+  catch(x){toast('백업 파일을 만들 수 없어요')}};
+$('#rstr').onclick=()=>{const i=document.createElement('input');i.type='file';i.accept='.json,application/json';
+  i.onchange=()=>{const f=i.files[0];if(!f)return;const r=new FileReader();
+    r.onload=async()=>{let d;try{d=JSON.parse(r.result)}catch(x){return toast('백업 파일을 읽을 수 없어요')}
+      if(!d||!Array.isArray(d.lists))return toast('wiserest 백업 파일이 아니에요');
+      const n=d.lists.reduce((a,l)=>a+(l.items||[]).length,0);
+      if(!await ask(`백업(${d.date?new Date(d.date).toLocaleString('ko-KR'):'날짜 모름'})으로 복구할까요?\n리스트 ${d.lists.length}개 · 물건 ${n}개 · 노래 ${(d.songs||[]).length}곡\n지금 데이터는 이걸로 바뀌어요.`))return;
+      stopAll();S={lists:d.lists.map(l=>({id:l.id||uid(),title:l.title||'제목 없음',items:Array.isArray(l.items)?l.items:[]})),songs:Array.isArray(d.songs)?d.songs:[],cfg:{...DEF_CFG,...(d.cfg||{}),key:S.cfg.key}};
+      migrate();cur=null;photo='';save();render();toast('복구했어요!')};
+    r.readAsText(f)};i.click()};
+$('#rset').onclick=async()=>{
+  if(!await ask('정말 초기화할까요? 위시리스트·사진·노래·꾸미기·AI 키가 모두 지워져요.'))return;
+  if(!await ask('되돌릴 수 없어요. 먼저 백업하셨나요? 정말 지울까요?'))return;
+  stopAll();S={lists:[],songs:[],cfg:{...DEF_CFG}};cur=null;photo='';save();tab='w';render();toast('처음 상태로 초기화했어요')};
+// ---- 휴대폰 설치 (PWA) ----
+const standalone=matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
+let instEv=null;
+window.addEventListener('beforeinstallprompt',ev=>{ev.preventDefault();instEv=ev;if(!standalone)$('#inst').style.display='block'});
+window.addEventListener('appinstalled',()=>{$('#inst').style.display='none';toast('설치 완료! 홈 화면에서 wiserest를 열어보세요')});
+if(!standalone&&/iphone|ipad|ipod/i.test(navigator.userAgent)){ // 아이폰은 자동 설치 창이 없어서 방법 안내
+  $('#inst').style.display='block';$('#insttx').innerHTML='사파리 아래쪽 <b>공유 버튼(□↑)</b> → <b>홈 화면에 추가</b>를 눌러주세요.';$('#instb').style.display='none'}
+$('#instb').onclick=async()=>{if(!instEv)return toast('크롬 메뉴(⋮) → "앱 설치" 또는 "홈 화면에 추가"를 눌러주세요');
+  instEv.prompt();const r=await instEv.userChoice;instEv=null;if(r.outcome==='accepted')$('#inst').style.display='none'};
+render();
+if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
+</script></body></html>
